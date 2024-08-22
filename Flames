@@ -1,0 +1,71 @@
+import java.util.Scanner;
+
+public class FlamesGame {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Take the names as input
+        System.out.println("Enter the first name: ");
+        String name1 = scanner.nextLine().toLowerCase().replaceAll("\\s", "");
+
+        System.out.println("Enter the second name: ");
+        String name2 = scanner.nextLine().toLowerCase().replaceAll("\\s", "");
+
+        // Remove common characters
+        int totalLength = removeCommonCharacters(name1, name2);
+
+        // Determine the FLAMES result
+        String result = getFlamesResult(totalLength);
+
+        // Display the result
+        System.out.println("The relationship is: " + result);
+
+        scanner.close();
+    }
+
+    // Method to remove common characters and return the total length of the remaining characters
+    private static int removeCommonCharacters(String name1, String name2) {
+        StringBuilder name1Builder = new StringBuilder(name1);
+        StringBuilder name2Builder = new StringBuilder(name2);
+
+        for (int i = 0; i < name1Builder.length(); i++) {
+            for (int j = 0; j < name2Builder.length(); j++) {
+                if (name1Builder.charAt(i) == name2Builder.charAt(j)) {
+                    name1Builder.deleteCharAt(i);
+                    name2Builder.deleteCharAt(j);
+                    i--;
+                    break;
+                }
+            }
+        }
+
+        return name1Builder.length() + name2Builder.length();
+    }
+
+    // Method to determine the FLAMES result based on the remaining characters
+    private static String getFlamesResult(int count) {
+        String flames = "FLAMES";
+
+        while (flames.length() > 1) {
+            int index = (count % flames.length()) - 1;
+
+            if (index >= 0) {
+                flames = flames.substring(index + 1) + flames.substring(0, index);
+            } else {
+                flames = flames.substring(0, flames.length() - 1);
+            }
+        }
+
+        // Return the final character in flames
+        switch (flames) {
+            case "F": return "Friends";
+            case "L": return "Love";
+            case "A": return "Affection";
+            case "M": return "Marriage";
+            case "E": return "Enemy";
+            case "S": return "Siblings";
+            default: return "Unknown";
+        }
+    }
+}
