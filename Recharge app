@@ -1,0 +1,135 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+class User {
+    String username;
+    String password;
+    double balance;
+
+    public User(String username, String password, double balance) {
+        this.username = username;
+        this.password = password;
+        this.balance = balance;
+    }
+}
+
+public class RechargeApp {
+
+    private static Map<String, User> users = new HashMap<>();
+    private static List<String> rechargeHistory = new ArrayList<>();
+    private static User currentUser = null;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        boolean isRunning = true;
+
+        // Sample users
+        users.put("user1", new User("user1", "pass1", 100.00));
+        users.put("user2", new User("user2", "pass2", 200.00));
+
+        while (isRunning) {
+            if (currentUser == null) {
+                System.out.println("Welcome to the Recharge App");
+                System.out.println("1. Login");
+                System.out.println("2. Register");
+                System.out.println("3. Exit");
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                switch (choice) {
+                    case 1 -> login(scanner);
+                    case 2 -> register(scanner);
+                    case 3 -> {
+                        isRunning = false;
+                        System.out.println("Exiting the app...");
+                    }
+                    default -> System.out.println("Invalid choice! Please try again.");
+                }
+            } else {
+                System.out.println("Welcome, " + currentUser.username);
+                System.out.println("1. Recharge");
+                System.out.println("2. Check Balance");
+                System.out.println("3. View Recharge History");
+                System.out.println("4. Logout");
+                int choice = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+
+                switch (choice) {
+                    case 1 -> recharge(scanner);
+                    case 2 -> checkBalance();
+                    case 3 -> viewRechargeHistory();
+                    case 4 -> {
+                        currentUser = null;
+                        System.out.println("Logged out successfully.");
+                    }
+                    default -> System.out.println("Invalid choice! Please try again.");
+                }
+            }
+        }
+
+        scanner.close();
+    }
+
+    // Method to handle user login
+    private static void login(Scanner scanner) {
+        System.out.println("Enter username: ");
+        String username = scanner.nextLine();
+        System.out.println("Enter password: ");
+        String password = scanner.nextLine();
+
+        User user = users.get(username);
+        if (user != null && user.password.equals(password)) {
+            currentUser = user;
+            System.out.println("Login successful!");
+        } else {
+            System.out.println("Invalid username or password. Please try again.");
+        }
+    }
+
+    // Method to handle user registration
+    private static void register(Scanner scanner) {
+        System.out.println("Enter a username: ");
+        String username = scanner.nextLine();
+        System.out.println("Enter a password: ");
+        String password = scanner.nextLine();
+
+        if (users.containsKey(username)) {
+            System.out.println("Username already exists! Please choose a different username.");
+        } else {
+            users.put(username, new User(username, password, 0.0));
+            System.out.println("Registration successful! You can now login.");
+        }
+    }
+
+    // Method to recharge a mobile number
+    private static void recharge(Scanner scanner) {
+        System.out.println("Enter the mobile number to recharge: ");
+        String mobileNumber = scanner.nextLine();
+        System.out.println("Enter the recharge amount: ");
+        double amount = scanner.nextDouble();
+
+        if (currentUser.balance >= amount) {
+            currentUser.balance -= amount;
+            rechargeHistory.add("Recharged " + mobileNumber + " with amount " + amount);
+            System.out.println("Recharge successful!");
+        } else {
+            System.out.println("Insufficient balance! Please check your balance and try again.");
+        }
+    }
+
+    // Method to check the current balance
+    private static void checkBalance() {
+        System.out.println("Your current balance is: " + currentUser.balance);
+    }
+
+    // Method to view the recharge history
+    private static void viewRechargeHistory() {
+        System.out.println("Recharge History:");
+        for (String history : rechargeHistory) {
+            System.out.println(history);
+        }
+    }
+}
